@@ -1,0 +1,36 @@
+#!/usr/bin/python
+
+while True:
+
+        import serial
+        import MySQLdb
+        import time
+
+        db = MySQLdb.connect("localhost", "root", "", "kosteus")
+        cur = db.cursor()
+
+        port = serial.Serial("/dev/rfcomm0", baudrate = 9600, timeout=None)
+        port.flushInput()
+
+        kosteus = 0;
+
+        vals = port.readline()
+
+        print vals
+
+        print "Saatiin luettua arvot"
+
+        try:
+
+                if vals:
+                        cur.execute("DELETE FROM kosteus WHERE kosteus BETWEEN -15000 AND 15000")
+                        cur.execute("INSERT INTO kosteus (kosteus) VALUES (%s)"% (vals))
+                else:
+                        print ":("
+                db.commit()
+                print "Meni lapi"
+                db.close()
+
+        except MySQLdb.ProgrammingError, e:
+                print "Nyt tapahtui kauheita"
+        time.sleep(5)
