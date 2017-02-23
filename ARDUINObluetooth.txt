@@ -1,0 +1,29 @@
+include <SoftwareSerial.h>
+#define kosteusPin 7
+
+int bluetoothTx = 3;  
+int bluetoothRx = 2;  
+int humidRaw;
+float voltage;
+float humidActual;
+
+SoftwareSerial bluetooth(bluetoothTx, bluetoothRx);
+
+void setup()
+{
+  Serial.begin(9600);  
+  bluetooth.begin(9600);  
+  humidRaw = kosteusPin;
+  
+  voltage = (humidRaw/1023.0)*5.0;
+  humidActual = (voltage-0.958)/0.0307;
+}
+
+void loop()
+{
+  if (humidRaw > 0) {   
+    Serial.println(humidRaw);  
+    bluetooth.println(humidRaw);
+    delay(2000);  
+  }  
+}
